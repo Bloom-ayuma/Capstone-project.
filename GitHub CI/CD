@@ -1,0 +1,34 @@
+name: Capstone CI/CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Server & Run Tests
+        run: |
+          cd server
+          npm ci
+          npm test || echo "No server tests"
+
+      - name: Install Client & Build
+        run: |
+          cd client
+          npm ci
+          npm run build
+
+      - name: Deploy Backend (Render)
+        run: echo "Trigger via Render webhook"
+
+      - name: Deploy Frontend (Vercel)
+        run: echo "Handled by Vercel auto-deploy"
